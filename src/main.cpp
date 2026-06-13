@@ -16,6 +16,7 @@ volatile unsigned long lastMainTime = 0;
 volatile unsigned long lastTempsTime = 0;
 volatile unsigned long lastFaultTime = 0;
 volatile unsigned long lastDrivetrainTime = 0;
+volatile unsigned long lastConfigTime = 0;
 
 twai_message_t CANmsgRX;
 twai_message_t CANmsgTX;
@@ -33,6 +34,8 @@ void setup() {
   pinMode(trButton, INPUT);
   pinMode(lEncoderA, INPUT);
   pinMode(lEncoderB, INPUT);
+  pinMode(rEncoderA, INPUT);
+  pinMode(rEncoderB, INPUT);
 
   //attach interrupts to the 4 buttons
   attachInterrupt(digitalPinToInterrupt(blButton), blButtonHandler, FALLING);
@@ -40,6 +43,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(tlButton), tlButtonHandler, FALLING);
   attachInterrupt(digitalPinToInterrupt(trButton), trButtonHandler, FALLING);
   attachInterrupt(digitalPinToInterrupt(lEncoderA), lEncoderHandler, FALLING);
+  attachInterrupt(digitalPinToInterrupt(rEncoderA), rEncoderHandler, FALLING);
 
   //initialize tft
   tft.init();
@@ -48,7 +52,8 @@ void setup() {
   tft.fillScreen(0x000);
 
   //boot sequence
-  //drawBoot();
+  drawBoot();
+  delay(500);
   digitalWrite(AMS, HIGH);
   digitalWrite(IMD, HIGH);
   delay(BOOTSCREEN_TIME);
@@ -80,6 +85,12 @@ void setup() {
 
   EEPROM.begin(EEPROM_SIZE);
   data.gearRatioSelect = EEPROM.read(0);
+  data.maxDriveTorqueNm = EEPROM.read(1) << 8 | EEPROM.read(2);
+  data.maxRegenTorqueNm = EEPROM.read(3) << 8 | EEPROM.read(4);
+  data.maxRegenCurrent = EEPROM.read(5) << 8 | EEPROM.read(6);
+  data.brakeFilterAlphaScale = EEPROM.read(7) << 8 | EEPROM.read(8);
+  data.brakeFilterBetaScale = EEPROM.read(9) << 8 | EEPROM.read(10);
+  data.brakeMechThreshold = EEPROM.read(11) << 8 | EEPROM.read(12);
   EEPROM.end();
   switch(data.gearRatioSelect){
     case 0:
@@ -93,6 +104,8 @@ void setup() {
     break;
     case 3:
       data.gearRatio = 3.071;
+    case 4:
+      data.gearRatio = 2.84615;
     break;
   }
 }
@@ -123,12 +136,18 @@ void loop() {
       }
     break;
     case 3:
-    if(millis()-lastDrivetrainTime > DRIVETRAIN_SCREEN_REFRESH_TIME){
-      drawDrivetrainSettings();
-      lastDrivetrainTime = millis();
-    }
+      if(millis()-lastDrivetrainTime > DRIVETRAIN_SCREEN_REFRESH_TIME){
+        drawDrivetrainSettings();
+        lastDrivetrainTime = millis();
+      }
+      break;
+    case 4:
+      if(millis()-lastConfigTime > CONFIG_SCREEN_REFRESH_TIME){
+        drawConfig();
+        lastConfigTime = millis();
+      }
     break;
-  }
+}
   getData();
   //remember what we drew so we can efficiently overwrite next frame
   lastData = data; 

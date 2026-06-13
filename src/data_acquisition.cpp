@@ -111,7 +111,7 @@ void getData(){
       case 0xA5:
       //actual velocity in rpm
         data.motorSpeed = CANmsgRX.data[3] * 256 + CANmsgRX.data[2];
-        data.groundSpeed = ((float)data.motorSpeed / data.gearRatio); //* (PI * TIRE_DIAMETER / 1056);
+        data.groundSpeed = abs(((float)data.motorSpeed / data.gearRatio)) * (PI * TIRE_DIAMETER / 1056);
         DEBUG_PRINT("MOTOR SPEED DATA RECIEVED: ");
         DEBUG_PRINTLN(data.motorSpeed);
         DEBUG_PRINT("CALCULATED GROUND SPEED: ");
@@ -154,9 +154,12 @@ void getData(){
         motorContTemps[10].temp = CANmsgRX.data[4] * 256 + CANmsgRX.data[5];
       break;
       case 0x03:
+      //dtc flags 1 bytes 4, 5, dtc flags 3 bytes 6, 7
+      //avg byte 2
         data.highestCell = CANmsgRX.data[1];
         data.chargePercent = CANmsgRX.data[0];
       break;
+      
     }
     //lastData = data;
   }

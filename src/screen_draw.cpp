@@ -224,6 +224,7 @@ void drawDrivetrainSettings(){
       tft.drawString("12T 3.583", 67, 151);
       tft.drawString("13T 3.308", 67, 180);
       tft.drawString("14T 3.071", 66, 209);
+      tft.drawString("37T 2.846", 66, 238);
       tft.setTextColor(0x0);
       tft.drawString("11T 3.909", 66, 123);
     break;
@@ -232,6 +233,7 @@ void drawDrivetrainSettings(){
       tft.drawString("11T 3.909", 66, 123);
       tft.drawString("13T 3.308", 67, 180);
       tft.drawString("14T 3.071", 66, 209);
+      tft.drawString("37T 2.846", 66, 238);
       tft.setTextColor(0x0);
       tft.drawString("12T 3.583", 67, 151);
     break;
@@ -240,6 +242,7 @@ void drawDrivetrainSettings(){
       tft.drawString("11T 3.909", 66, 123);
       tft.drawString("12T 3.583", 67, 151);
       tft.drawString("14T 3.071", 66, 209);
+      tft.drawString("37T 2.846", 66, 238);
       tft.setTextColor(0x0);
       tft.drawString("13T 3.308", 67, 180);
     break;
@@ -248,8 +251,69 @@ void drawDrivetrainSettings(){
       tft.drawString("11T 3.909", 66, 123);
       tft.drawString("12T 3.583", 67, 151);
       tft.drawString("13T 3.308", 67, 180);
+      tft.drawString("37T 2.846", 66, 238);
       tft.setTextColor(0x0);
       tft.drawString("14T 3.071", 66, 209);
     break;
+    case 4:
+      tft.fillRect(65, 232, 111, 27, 0xFFFF);
+      tft.drawString("11T 3.909", 66, 123);
+      tft.drawString("12T 3.583", 67, 151);
+      tft.drawString("13T 3.308", 67, 180);
+      tft.drawString("14T 3.071", 66, 209);
+      tft.setTextColor(0x0);
+      tft.drawString("37T 2.846", 66, 238);
+    break;
   }
+}
+
+//
+void drawConfig(){
+  if(data.cfgChangedSinceLastConfirm) tft.fillRect(214, 10, 16, 16, 0xF880);
+  else tft.fillRect(214, 10, 16, 16, 0x57E0);
+  tft.setTextColor(0xFFFF);
+  tft.setTextSize(1);
+  tft.setFreeFont(&FreeSansBold12pt7b);
+  tft.drawString("Config", 82, 5);
+  tft.setFreeFont(&FreeSansBold9pt7b);
+  tft.drawString("maxDriveNm", 10, 50);
+  tft.drawString("maxRegenNm", 10, 75);
+  tft.drawString("maxRegenA", 10, 102);
+  tft.drawString("bfAScale", 10, 127);
+  tft.drawString("bfBScale", 10, 155);
+  tft.drawString("brakeThresh", 10, 181);
+  tft.setTextColor(0x0);
+  switch(data.inputSelect){
+    case 0:
+      tft.fillRect(6, 48, 116, 19, 0xFFFF);
+      tft.drawString("maxDriveNm", 10, 50);    
+    break;
+    case 1:
+      tft.fillRect(7, 75, 125, 19, 0xFFFF);
+      tft.drawString("maxRegenNm", 10, 75);  
+    break;
+    case 2:
+      tft.fillRect(9, 102, 105, 19, 0xFFFF);
+      tft.drawString("maxRegenA", 10, 100);    
+    break;
+    case 3:
+      tft.fillRect(9, 125, 82, 19, 0xFFFF);
+      tft.drawString("bfAScale", 10, 127);    
+    break;
+    case 4:
+      tft.fillRect(9, 153, 82, 19, 0xFFFF);
+      tft.drawString("bfBScale", 10, 155);
+    break;
+    case 5:
+      tft.fillRect(8, 181, 113, 19, 0xFFFF);
+      tft.drawString("brakeThresh", 10, 181);
+    break;
+  }
+  tft.setTextColor(0xFFFF);
+  tft.drawNumber(data.maxDriveTorqueNm, 130, 50);
+  tft.drawNumber(data.maxRegenTorqueNm, 140, 75);
+  tft.drawNumber(data.maxRegenCurrent, 120, 100);
+  tft.drawNumber(data.brakeFilterAlphaScale, 90, 127);
+  tft.drawNumber(data.brakeFilterBetaScale, 90, 155);
+  tft.drawNumber(data.brakeMechThreshold, 125, 181);
 }

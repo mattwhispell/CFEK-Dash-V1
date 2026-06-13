@@ -46,10 +46,11 @@
 #define TEMP_SCREEN_REFRESH_TIME 1000//in ms
 #define FAULT_SCREEN_REFRESH_TIME 1000 //in ms
 #define DRIVETRAIN_SCREEN_REFRESH_TIME 100 //in ms
+#define CONFIG_SCREEN_REFRESH_TIME 100 //in ms
 
 //drivetrain definitions
 //#define GEAR_RATIO 3.58333
-#define GEAR_RATIO 3.30769
+//#define GEAR_RATIO 3.30769
 #define TIRE_DIAMETER 16 //in inches
 #define SLIP_RATIO_LIMIT .05 // in decimal percentage
 
@@ -64,7 +65,8 @@ enum screen {  //which screen is currently shown
   main,
   faults,
   temps,
-  drivetrain
+  drivetrain,
+  config
 };
 
 struct faultData{
@@ -89,6 +91,16 @@ struct vehicleData{  //stores data to put on the screen
   unsigned int lowestCell; //degF
   unsigned int highestCell; //degF
   unsigned int gearRatioSelect; //0, 1, 2, or 3 depending on gear ratio selected
+  unsigned int inputSelect; //for selection of config inputs
+  //motor params for config
+  int16_t maxDriveTorqueNm;   
+  int16_t maxRegenTorqueNm;  
+  int16_t maxRegenCurrent;
+  // Brake Params for config
+  int     brakeFilterAlphaScale;   // e.g. 38 (~0.15)
+  int     brakeFilterBetaScale;    // e.g. 218 (~0.85)
+  int     brakeMechThreshold;
+  bool cfgChangedSinceLastConfirm = false;
   float gearRatio; 
   vehicleState state;
   screen currentScreen;
@@ -123,6 +135,7 @@ extern twai_message_t CANmsgTX;
 //interrupts get attached to the 4 ISR's below for snappy button handling
 void getData(); //in data_acquision.cpp
 void sendData(unsigned int addr, unsigned int dataLength, unsigned long long msg); //in data_send.cpp
+void sendData(twai_message_t msg);
 void calculateSlippage(); //in traction_control.cpp
 //in screen_draw.cpp
 void drawBoot(); 
@@ -130,11 +143,13 @@ void drawMain();
 void drawFaults();
 void drawTemps();
 void drawDrivetrainSettings();
+void drawConfig();
 //in buttons_encoders.cpp
 void IRAM_ATTR blButtonHandler();
 void IRAM_ATTR brButtonHandler();
 void IRAM_ATTR tlButtonHandler();
 void IRAM_ATTR trButtonHandler();
 void IRAM_ATTR lEncoderHandler(); //interrupt gets attached to this for encoder
+void IRAM_ATTR rEncoderHandler(); //interrupt gets attached to this for encoder
 
 #endif

@@ -15,3 +15,10 @@ void sendData(unsigned int addr, unsigned int dataLength, unsigned long long msg
         DEBUG_PRINTLN("Failed to queue message for transmission");
     }
 }
+void sendData(twai_message_t msg){
+    if (twai_transmit(&CANmsgTX, pdMS_TO_TICKS(1000)) == ESP_OK) {
+        DEBUG_PRINTLN("Message queued for transmission");
+    } else {
+        DEBUG_PRINTLN("Failed to queue message for transmission");
+    }
+}

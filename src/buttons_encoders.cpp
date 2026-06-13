@@ -16,7 +16,7 @@ void IRAM_ATTR blButtonHandler(){
     if(data.currentScreen > 0){
       data.currentScreen = static_cast<screen>(static_cast<int>(data.currentScreen) - 1);
     }
-    else data.currentScreen = drivetrain; //loop around feature
+    else data.currentScreen = config; //loop around feature
     lastButtonTime = millis();
     tft.fillScreen(0x0);
 
@@ -39,7 +39,7 @@ void IRAM_ATTR brButtonHandler(){
         }
       }
     lastData.currentScreen = data.currentScreen;
-    if(data.currentScreen < 3 ){
+    if(data.currentScreen < 4 ){
       data.currentScreen = static_cast<screen>(static_cast<int>(data.currentScreen) + 1);
     }
     else data.currentScreen = main; //loop around feature
@@ -75,6 +75,28 @@ void IRAM_ATTR trButtonHandler(){
     //   data.state = static_cast<vehicleState>(static_cast<int>(data.state) + 1);
     // }
     // //else data.state = state0; //loop around feature
+    if(data.currentScreen == config){
+      //save data to eeprom
+      EEPROM.begin(EEPROM_SIZE);
+      EEPROM.write(1, data.maxDriveTorqueNm >> 8);
+      EEPROM.write(2, data.maxDriveTorqueNm);
+      EEPROM.write(3, data.maxRegenTorqueNm >> 8);
+      EEPROM.write(4, data.maxRegenTorqueNm);
+      EEPROM.write(5, data.maxRegenCurrent >> 8);
+      EEPROM.write(6, data.maxRegenCurrent);
+      EEPROM.write(7, data.brakeFilterAlphaScale >> 8);
+      EEPROM.write(8, data.brakeFilterAlphaScale);
+      EEPROM.write(9, data.brakeFilterBetaScale >> 8);
+      EEPROM.write(10, data.brakeFilterBetaScale);
+      EEPROM.write(11, data.brakeMechThreshold >> 8);
+      EEPROM.write(12, data.brakeMechThreshold);
+      EEPROM.commit();
+      EEPROM.end();
+      //send config messages to ecu
+      twai_message_t torqueCfg, brakeCfg;
+
+      data.cfgChangedSinceLastConfirm = false;
+    }
     lastButtonTime = millis();
 
     // DEBUG_PRINT("CURRENT STATE: ");
@@ -88,14 +110,20 @@ void IRAM_ATTR lEncoderHandler() {
     if (digitalRead(lEncoderB)) {
       encoderPos--;   // CCW
       //DEBUG_PRINTLN("CCW");
-      if(data.currentScreen == drivetrain && data.gearRatioSelect > 0){
-        data.gearRatioSelect--;
+      if(data.currentScreen == drivetrain && data.gearRatioSelect > 0)data.gearRatioSelect--;
+      else if(data.currentScreen == config && data.inputSelect > 0){
+        tft.fillScreen(0x0);
+        data.inputSelect--;
+        drawConfig();
       }
     } else {
       encoderPos++;   // CW
       //DEBUG_PRINTLN("CW");
-      if(data.currentScreen == drivetrain && data.gearRatioSelect < 3){
-        data.gearRatioSelect++;
+      if(data.currentScreen == drivetrain && data.gearRatioSelect < 4)data.gearRatioSelect++;
+      else if(data.currentScreen == config && data.inputSelect < 5){
+        tft.fillScreen(0x0);
+        data.inputSelect++;
+        drawConfig();
       }
     }
     switch(data.gearRatioSelect){
@@ -114,6 +142,80 @@ void IRAM_ATTR lEncoderHandler() {
     }
     tft.fillScreen(0x0);
     DEBUG_PRINTLN(encoderPos);
+    lastEncoderTime = millis();
+  }
+}
+
+void IRAM_ATTR rEncoderHandler() {
+  if(millis()-lastEncoderTime > 50){
+    //Serial.println("CHANGE DETECTED");
+    if (digitalRead(rEncoderB)) {
+      encoderPos--;   // CCW
+      //DEBUG_PRINTLN("CCW");
+      if(data.currentScreen == config){
+        switch(data.inputSelect){
+          case 0:
+            tft.fillRect(127, 42, 46, 22, 0x0);
+            if(data.maxDriveTorqueNm > 0) data.maxDriveTorqueNm--;
+          break;
+          case 1:
+            tft.fillRect(137, 67, 46, 22, 0x0);
+            if(data.maxRegenTorqueNm > 0) data.maxRegenTorqueNm--;
+          break;
+          case 2:
+            tft.fillRect(117, 92, 46, 22, 0x0);
+            if(data.maxRegenCurrent > 0) data.maxRegenCurrent--;
+          break;
+          case 3:
+            tft.fillRect(87, 117, 46, 22, 0x0);
+            if(data.brakeFilterAlphaScale > 0) data.brakeFilterAlphaScale--;
+          break;
+          case 4:
+            tft.fillRect(87, 142, 46, 22, 0x0);
+            if(data.brakeFilterBetaScale > 0) data.brakeFilterBetaScale--;
+          break;
+          case 5:
+            tft.fillRect(122, 167, 46, 22, 0x0);
+            if(data.brakeMechThreshold > 0) data.brakeMechThreshold--;
+          break;
+        }
+        drawConfig();
+      }
+    } else {
+      encoderPos++;   // CW
+      //DEBUG_PRINTLN("CW");
+      if(data.currentScreen == config){
+        switch(data.inputSelect){
+          case 0:
+            tft.fillRect(127, 42, 46, 22, 0x0);
+            if(data.maxDriveTorqueNm < 256) data.maxDriveTorqueNm++;
+          break;
+          case 1:
+            tft.fillRect(137, 67, 46, 22, 0x0);
+            if(data.maxRegenTorqueNm < 256) data.maxRegenTorqueNm++;
+          break;
+          case 2:
+            tft.fillRect(117, 92, 46, 22, 0x0);
+            if(data.maxRegenCurrent < 256) data.maxRegenCurrent++;
+          break;
+          case 3:
+            tft.fillRect(87, 117, 46, 22, 0x0);
+            if(data.brakeFilterAlphaScale < 256) data.brakeFilterAlphaScale++;
+          break;
+          case 4:
+            tft.fillRect(87, 142, 46, 22, 0x0);
+            if(data.brakeFilterBetaScale < 256) data.brakeFilterBetaScale++;
+          break;
+          case 5:
+            tft.fillRect(122, 167, 46, 22, 0x0);
+            if(data.brakeMechThreshold < 256) data.brakeMechThreshold++;
+          break;
+        }
+        drawConfig();
+      }
+    }
+    DEBUG_PRINTLN(encoderPos);
+    data.cfgChangedSinceLastConfirm = true;
     lastEncoderTime = millis();
   }
 }
