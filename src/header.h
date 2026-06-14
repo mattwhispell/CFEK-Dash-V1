@@ -66,7 +66,8 @@ enum screen {  //which screen is currently shown
   faults,
   temps,
   drivetrain,
-  config
+  config,
+  etch
 };
 
 struct faultData{
@@ -129,6 +130,7 @@ extern volatile int encoderPos;
 extern volatile unsigned long lastEncoderTime; // debounce timer for encoder
 extern volatile bool lastlEncoderA;
 extern volatile unsigned long lastButtonTime;
+extern volatile unsigned int secretCount, etchx, etchy;
 
 extern twai_message_t CANmsgRX;
 extern twai_message_t CANmsgTX;

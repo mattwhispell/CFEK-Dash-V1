@@ -17,6 +17,7 @@ volatile unsigned long lastTempsTime = 0;
 volatile unsigned long lastFaultTime = 0;
 volatile unsigned long lastDrivetrainTime = 0;
 volatile unsigned long lastConfigTime = 0;
+volatile unsigned int secretCount = 0, etchx = 0, etchy = 0;
 
 twai_message_t CANmsgRX;
 twai_message_t CANmsgTX;
@@ -109,14 +110,7 @@ void setup() {
       data.gearRatio = 2.84615;
     break;
   }
-  if(data.serialDebug){
-    #define DEBUG_PRINTLN  Serial.println
-    #define DEBUG_PRINT    Serial.print
-  }
-  else{
-    #define DEBUG_PRINTLN
-    #define DEBUG_PRINT
-  }
+
 }
 
 void loop() {
@@ -153,8 +147,10 @@ void loop() {
       if(millis()-lastConfigTime > CONFIG_SCREEN_REFRESH_TIME){
         drawConfig();
         lastConfigTime = millis();
-        DEBUG_PRINTLN("test");
       }
+    break;
+    case 5:
+      tft.fillRect(etchx, etchy, 3, 3, 0xfe60);
     break;
 }
   getData();

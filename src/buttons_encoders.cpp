@@ -25,11 +25,17 @@ void IRAM_ATTR blButtonHandler(){
     DEBUG_PRINT("LAST SCREEN: ");
     DEBUG_PRINTLN(lastData.currentScreen);
     DEBUG_PRINTLN("");
+    secretCount = 0;
   }
 }
 //bottom right button increments current screen
 void IRAM_ATTR brButtonHandler(){
+  
   if(millis()-lastButtonTime > BUTTON_DEBOUNCE_TIME){
+    DEBUG_PRINT("bl:");
+    DEBUG_PRINTLN(digitalRead(blButton));
+    DEBUG_PRINT("br:");
+    DEBUG_PRINTLN(digitalRead(brButton));
     if(data.currentScreen == drivetrain){
         EEPROM.begin(EEPROM_SIZE);
         if(EEPROM.read(0) != data.gearRatioSelect){
@@ -51,6 +57,13 @@ void IRAM_ATTR brButtonHandler(){
     DEBUG_PRINT("LAST SCREEN: ");
     DEBUG_PRINTLN(lastData.currentScreen);
     DEBUG_PRINTLN("");
+    if(digitalRead(blButton) == false && digitalRead(brButton) == false){
+      if(data.currentScreen != etch){
+        data.currentScreen = etch;
+        tft.fillScreen(0x0);
+      }
+      else if(data.currentScreen == etch) data.currentScreen = main;
+    }
   }
 }
 //top left button decrements current state
@@ -98,6 +111,7 @@ void IRAM_ATTR trButtonHandler(){
 
       //data.cfgChangedSinceLastConfirm = false;
     }
+    else if(data.currentScreen == etch) tft.fillScreen(0x0);
     lastButtonTime = millis();
 
     // DEBUG_PRINT("CURRENT STATE: ");
@@ -106,7 +120,7 @@ void IRAM_ATTR trButtonHandler(){
 }
 
 void IRAM_ATTR lEncoderHandler() {
-  if(millis()-lastEncoderTime > 50){
+  if(millis()-lastEncoderTime > 25){
     //Serial.println("CHANGE DETECTED");
     if (digitalRead(lEncoderB)) {
       encoderPos--;   // CCW
@@ -117,6 +131,9 @@ void IRAM_ATTR lEncoderHandler() {
         data.inputSelect--;
         drawConfig();
       }
+      else if(data.currentScreen == etch && etchx > 0){
+        etchx--;
+      }
     } else {
       encoderPos++;   // CW
       //DEBUG_PRINTLN("CW");
@@ -125,6 +142,9 @@ void IRAM_ATTR lEncoderHandler() {
         tft.fillScreen(0x0);
         data.inputSelect++;
         drawConfig();
+      }
+      else if(data.currentScreen == etch && etchx < 237){
+        etchx++;
       }
     }
     switch(data.gearRatioSelect){
@@ -141,14 +161,13 @@ void IRAM_ATTR lEncoderHandler() {
         data.gearRatio = 3.071;
       break;
     }
-    tft.fillScreen(0x0);
     DEBUG_PRINTLN(encoderPos);
     lastEncoderTime = millis();
   }
 }
 
 void IRAM_ATTR rEncoderHandler() {
-  if(millis()-lastEncoderTime > 50){
+  if(millis()-lastEncoderTime > 25){
     //Serial.println("CHANGE DETECTED");
     if (digitalRead(rEncoderB)) {
       encoderPos--;   // CCW
@@ -192,6 +211,9 @@ void IRAM_ATTR rEncoderHandler() {
         }
         drawConfig();
       }
+      else if(data.currentScreen == etch && etchy > 0){
+        etchy--;
+      }
     } else {
       encoderPos++;   // CW
       //DEBUG_PRINTLN("CW");
@@ -233,6 +255,9 @@ void IRAM_ATTR rEncoderHandler() {
           break;
         }
         drawConfig();
+      }
+      else if(data.currentScreen == etch && etchy < 317){
+        etchy++;
       }
     }
     DEBUG_PRINTLN(encoderPos);
