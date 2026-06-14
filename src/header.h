@@ -9,15 +9,15 @@
 #ifndef HEADER_H
 #define HEADER_H
 
-//enable/disable debugging
-#define DEBUG               // Comment out this Line to Remove Serial Debugging
-#ifdef DEBUG
+// //enable/disable debugging
+// #define DEBUG               // Comment out this Line to Remove Serial Debugging
+// #ifdef DEBUG
   #define DEBUG_PRINTLN  Serial.println
   #define DEBUG_PRINT    Serial.print
-#else
-  #define DEBUG_PRINTLN
-  #define DEBUG_PRINT
-#endif
+// #else
+//   #define DEBUG_PRINTLN
+//   #define DEBUG_PRINT
+// #endif
 
 //pin definitions
 #define AMS 12
@@ -88,10 +88,11 @@ struct vehicleData{  //stores data to put on the screen
   unsigned int batteryVoltage; //V
   unsigned int batteryCurrent; //A
   unsigned int chargePercent; //%
-  unsigned int lowestCell; //degF
+  unsigned int avgCell; //degF
   unsigned int highestCell; //degF
   unsigned int gearRatioSelect; //0, 1, 2, or 3 depending on gear ratio selected
   unsigned int inputSelect; //for selection of config inputs
+  unsigned int torqueFeedback;
   //motor params for config
   int16_t maxDriveTorqueNm;   
   int16_t maxRegenTorqueNm;  
@@ -107,6 +108,7 @@ struct vehicleData{  //stores data to put on the screen
   unsigned long postFaultWord;
   unsigned long runFaultWord;
   bool unhandledFault;
+  bool serialDebug;
 };
 
 //extern global variable declarations
@@ -136,6 +138,7 @@ extern twai_message_t CANmsgTX;
 void getData(); //in data_acquision.cpp
 void sendData(unsigned int addr, unsigned int dataLength, unsigned long long msg); //in data_send.cpp
 void sendData(twai_message_t msg);
+void sendConfig();
 void calculateSlippage(); //in traction_control.cpp
 //in screen_draw.cpp
 void drawBoot(); 

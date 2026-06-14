@@ -23,7 +23,7 @@ void drawMain(){
 
   //image sprites
   tft.pushImage(108, 10, batteryWidth, batteryHeight, battery);
-  tft.pushImage(130, 295, temp_bulbWidth, temp_bulbHeight, temp_bulb);
+  tft.pushImage(120, 295, temp_bulbWidth, temp_bulbHeight, temp_bulb);
   //if(data.unhandledFault) tft.pushImage(203, 88, warningWidth, warningHeight, warning);
   if(data.unhandledFault) tft.drawBitmap(203, 148, warning, warningWidth, warningHeight, 0xFA80);
 
@@ -84,14 +84,14 @@ void drawMain(){
   tft.setFreeFont(&FreeSans9pt7b);
   tft.drawString("C", 219, 296);
 
-  //coolest cell in blue
-  // tft.setFreeFont(&FreeSans12pt7b);
-  // tft.fillRect(12, 282, 85, 34, 0x0);
-  // tft.setTextColor(0x3A96);
-  // tft.drawNumber(data.lowestCell, 10, 292);
-  // tft.drawEllipse(57, 291, 3, 3, 0x3A96);
-  // tft.setFreeFont(&FreeSans9pt7b);
-  // tft.drawString("C", 65, 296);
+  //avg cell in green
+  tft.setFreeFont(&FreeSans12pt7b);
+  tft.fillRect(12, 282, 85, 34, 0x0);
+  tft.setTextColor(0x3de7);
+  tft.drawNumber(data.avgCell, 10, 292);
+  tft.drawEllipse(57, 291, 3, 3, 0x3de7);
+  tft.setFreeFont(&FreeSans9pt7b);
+  tft.drawString("C", 65, 296);
 
   //charge percentage
   tft.setFreeFont(&FreeSans18pt7b);
@@ -102,30 +102,35 @@ void drawMain(){
   tft.drawNumber(data.chargePercent, 82, 38);
   tft.drawString("%", 145, 38);
 
-  //vehicle state
   tft.setFreeFont(&FreeSans9pt7b);
-  if(lastData.state != data.state) {
-  tft.fillRect(76, 240, 84, 27, 0x0);
-  switch(data.state){
-    case 0:
-      tft.setTextColor(0xF206);
-      tft.drawString("state 0", 93, 246);
-      break;
-    case 1:
-      tft.setTextColor(0xfc20);
-      tft.drawString("state 1", 93, 246);
-      break;
-    case 2:
-      tft.setTextColor(0xffe0);
-      tft.drawString("state 2", 93, 246);
-      break;
-    case 3:
-      tft.setTextColor(0x07e0);
-      tft.drawString("state 3", 93, 246);
-      break;
+  tft.drawString("Nm", 138, 244);
+  tft.fillRect(85, 237, 45, 25, 0x0);
+  tft.setFreeFont(&FreeSansBold12pt7b);
+  tft.drawNumber(data.torqueFeedback, 88, 241);
+  //vehicle state
+//   tft.setFreeFont(&FreeSans9pt7b);
+//   if(lastData.state != data.state) {
+//   tft.fillRect(76, 240, 84, 27, 0x0);
+//   switch(data.state){
+//     case 0:
+//       tft.setTextColor(0xF206);
+//       tft.drawString("state 0", 93, 246);
+//       break;
+//     case 1:
+//       tft.setTextColor(0xfc20);
+//       tft.drawString("state 1", 93, 246);
+//       break;
+//     case 2:
+//       tft.setTextColor(0xffe0);
+//       tft.drawString("state 2", 93, 246);
+//       break;
+//     case 3:
+//       tft.setTextColor(0x07e0);
+//       tft.drawString("state 3", 93, 246);
+//       break;
 
-  }
-}
+//   }
+// }
 //white units
   tft.setTextSize(1);
   tft.setTextColor(0xFFFF);
@@ -282,6 +287,7 @@ void drawConfig(){
   tft.drawString("bfAScale", 10, 127);
   tft.drawString("bfBScale", 10, 155);
   tft.drawString("brakeThresh", 10, 181);
+  tft.drawString("serialDbg", 10, 205);
   tft.setTextColor(0x0);
   switch(data.inputSelect){
     case 0:
@@ -308,6 +314,10 @@ void drawConfig(){
       tft.fillRect(8, 181, 113, 19, 0xFFFF);
       tft.drawString("brakeThresh", 10, 181);
     break;
+    case 6:
+      tft.fillRect(8, 202, 91, 19, 0xFFFF);
+      tft.drawString("serialDbg", 10, 205);
+    break;
   }
   tft.setTextColor(0xFFFF);
   tft.drawNumber(data.maxDriveTorqueNm, 130, 50);
@@ -316,4 +326,6 @@ void drawConfig(){
   tft.drawNumber(data.brakeFilterAlphaScale, 90, 127);
   tft.drawNumber(data.brakeFilterBetaScale, 90, 155);
   tft.drawNumber(data.brakeMechThreshold, 125, 181);
+  if(data.serialDebug)tft.drawString("true", 106, 205);
+  else tft.drawString("false", 106, 205);
 }

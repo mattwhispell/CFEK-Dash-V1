@@ -111,7 +111,7 @@ void getData(){
       case 0xA5:
       //actual velocity in rpm
         data.motorSpeed = CANmsgRX.data[3] * 256 + CANmsgRX.data[2];
-        data.groundSpeed = abs(((float)data.motorSpeed / data.gearRatio)) * (PI * TIRE_DIAMETER / 1056);
+        data.groundSpeed = int(abs(((float)data.motorSpeed / data.gearRatio)) * (PI * TIRE_DIAMETER / 1056));
         DEBUG_PRINT("MOTOR SPEED DATA RECIEVED: ");
         DEBUG_PRINTLN(data.motorSpeed);
         DEBUG_PRINT("CALCULATED GROUND SPEED: ");
@@ -129,6 +129,9 @@ void getData(){
         DEBUG_PRINTLN(data.postFaultWord, HEX);
         DEBUG_PRINT("RUN FAULT DATA RECIEVED: ");
         DEBUG_PRINTLN(data.runFaultWord, HEX);
+      break;
+      case 0xAC:
+        data.torqueFeedback  = CANmsgRX.data[3] + CANmsgRX.data[2] << 8;
       break;
       //ID 0x420: ECU fault codes
       case 0x420:
@@ -155,9 +158,13 @@ void getData(){
       break;
       case 0x03:
       //dtc flags 1 bytes 4, 5, dtc flags 3 bytes 6, 7
-      //avg byte 2
+        data.avgCell = CANmsgRX.data[2];
         data.highestCell = CANmsgRX.data[1];
         data.chargePercent = CANmsgRX.data[0];
+      break;
+      case 0x10:
+        data.cfgChangedSinceLastConfirm = false;
+
       break;
       
     }

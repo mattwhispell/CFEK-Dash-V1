@@ -91,6 +91,7 @@ void setup() {
   data.brakeFilterAlphaScale = EEPROM.read(7) << 8 | EEPROM.read(8);
   data.brakeFilterBetaScale = EEPROM.read(9) << 8 | EEPROM.read(10);
   data.brakeMechThreshold = EEPROM.read(11) << 8 | EEPROM.read(12);
+  data.serialDebug = EEPROM.read(13);
   EEPROM.end();
   switch(data.gearRatioSelect){
     case 0:
@@ -108,10 +109,17 @@ void setup() {
       data.gearRatio = 2.84615;
     break;
   }
+  if(data.serialDebug){
+    #define DEBUG_PRINTLN  Serial.println
+    #define DEBUG_PRINT    Serial.print
+  }
+  else{
+    #define DEBUG_PRINTLN
+    #define DEBUG_PRINT
+  }
 }
 
 void loop() {
-  
   switch(data.currentScreen){
     case 0:
       //main screen
@@ -145,6 +153,7 @@ void loop() {
       if(millis()-lastConfigTime > CONFIG_SCREEN_REFRESH_TIME){
         drawConfig();
         lastConfigTime = millis();
+        DEBUG_PRINTLN("test");
       }
     break;
 }

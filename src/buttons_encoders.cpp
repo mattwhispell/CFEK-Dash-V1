@@ -90,12 +90,13 @@ void IRAM_ATTR trButtonHandler(){
       EEPROM.write(10, data.brakeFilterBetaScale);
       EEPROM.write(11, data.brakeMechThreshold >> 8);
       EEPROM.write(12, data.brakeMechThreshold);
+      EEPROM.write(13, data.serialDebug);
       EEPROM.commit();
       EEPROM.end();
       //send config messages to ecu
-      twai_message_t torqueCfg, brakeCfg;
+      sendConfig();
 
-      data.cfgChangedSinceLastConfirm = false;
+      //data.cfgChangedSinceLastConfirm = false;
     }
     lastButtonTime = millis();
 
@@ -120,7 +121,7 @@ void IRAM_ATTR lEncoderHandler() {
       encoderPos++;   // CW
       //DEBUG_PRINTLN("CW");
       if(data.currentScreen == drivetrain && data.gearRatioSelect < 4)data.gearRatioSelect++;
-      else if(data.currentScreen == config && data.inputSelect < 5){
+      else if(data.currentScreen == config && data.inputSelect < 6){
         tft.fillScreen(0x0);
         data.inputSelect++;
         drawConfig();
@@ -178,6 +179,16 @@ void IRAM_ATTR rEncoderHandler() {
             tft.fillRect(122, 167, 46, 22, 0x0);
             if(data.brakeMechThreshold > 0) data.brakeMechThreshold--;
           break;
+          case 6:
+            tft.fillRect(104, 202, 45, 19, 0x0);
+            data.serialDebug = !data.serialDebug;
+            if(data.serialDebug){
+              Serial.begin(115200);
+            }
+            else{
+              Serial.end();
+            }
+          break;
         }
         drawConfig();
       }
@@ -209,6 +220,16 @@ void IRAM_ATTR rEncoderHandler() {
           case 5:
             tft.fillRect(122, 167, 46, 22, 0x0);
             if(data.brakeMechThreshold < 256) data.brakeMechThreshold++;
+          break;
+          case 6:
+            tft.fillRect(104, 202, 45, 19, 0x0);
+            data.serialDebug = !data.serialDebug;
+            if(data.serialDebug){
+              Serial.begin(115200);
+            }
+            else{
+              Serial.end();
+            }
           break;
         }
         drawConfig();
