@@ -168,8 +168,8 @@ void getData(){
       case 0x10:
         data.cfgChangedSinceLastConfirm = false;
       break;
-      case 0x999:
-        data.glvVoltage = 0;
+      case 0xA9:
+        data.glvVoltage = CANmsgRX.data[7] * 256 + CANmsgRX.data[6];
         data.glvVoltage = (float)((int)(data.glvVoltage * 10)) / 10;
       break;
       
