@@ -25,7 +25,6 @@ void IRAM_ATTR blButtonHandler(){
     DEBUG_PRINT("LAST SCREEN: ");
     DEBUG_PRINTLN(lastData.currentScreen);
     DEBUG_PRINTLN("");
-    secretCount = 0;
   }
 }
 //bottom right button increments current screen
@@ -120,7 +119,7 @@ void IRAM_ATTR trButtonHandler(){
 }
 
 void IRAM_ATTR lEncoderHandler() {
-  if(millis()-lastEncoderTime > 25){
+  if(millis()-lastEncoderTime > 50){
     //Serial.println("CHANGE DETECTED");
     if (digitalRead(lEncoderB)) {
       encoderPos--;   // CCW
@@ -167,7 +166,7 @@ void IRAM_ATTR lEncoderHandler() {
 }
 
 void IRAM_ATTR rEncoderHandler() {
-  if(millis()-lastEncoderTime > 25){
+  if(millis()-lastEncoderTime > 50){
     //Serial.println("CHANGE DETECTED");
     if (digitalRead(rEncoderB)) {
       encoderPos--;   // CCW
@@ -187,15 +186,15 @@ void IRAM_ATTR rEncoderHandler() {
             if(data.maxRegenCurrent > 0) data.maxRegenCurrent--;
           break;
           case 3:
-            tft.fillRect(87, 117, 46, 22, 0x0);
+            tft.fillRect(87, 127, 46, 22, 0x0);
             if(data.brakeFilterAlphaScale > 0) data.brakeFilterAlphaScale--;
           break;
           case 4:
-            tft.fillRect(87, 142, 46, 22, 0x0);
+            tft.fillRect(87, 168, 46, 22, 0x0);
             if(data.brakeFilterBetaScale > 0) data.brakeFilterBetaScale--;
           break;
           case 5:
-            tft.fillRect(122, 167, 46, 22, 0x0);
+            tft.fillRect(122, 185, 46, 22, 0x0);
             if(data.brakeMechThreshold > 0) data.brakeMechThreshold--;
           break;
           case 6:
@@ -232,15 +231,15 @@ void IRAM_ATTR rEncoderHandler() {
             if(data.maxRegenCurrent < 256) data.maxRegenCurrent++;
           break;
           case 3:
-            tft.fillRect(87, 117, 46, 22, 0x0);
+            tft.fillRect(87, 127, 46, 22, 0x0);
             if(data.brakeFilterAlphaScale < 256) data.brakeFilterAlphaScale++;
           break;
           case 4:
-            tft.fillRect(87, 142, 46, 22, 0x0);
+            tft.fillRect(87, 168, 46, 22, 0x0);
             if(data.brakeFilterBetaScale < 256) data.brakeFilterBetaScale++;
           break;
           case 5:
-            tft.fillRect(122, 167, 46, 22, 0x0);
+            tft.fillRect(122, 185, 46, 22, 0x0);
             if(data.brakeMechThreshold < 256) data.brakeMechThreshold++;
           break;
           case 6:

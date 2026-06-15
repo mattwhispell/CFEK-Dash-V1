@@ -110,8 +110,11 @@ void getData(){
       //ID 0xA5: Motor position information
       case 0xA5:
       //actual velocity in rpm
+        noInterrupts();
         data.motorSpeed = CANmsgRX.data[3] * 256 + CANmsgRX.data[2];
-        data.groundSpeed = int(abs(((float)data.motorSpeed / data.gearRatio)) * (PI * TIRE_DIAMETER / 1056));
+        if(data.motorSpeed < 10) data.groundSpeed = 0;
+        else data.groundSpeed = (int)((float)data.motorSpeed * 0.0167238);
+        interrupts();
         DEBUG_PRINT("MOTOR SPEED DATA RECIEVED: ");
         DEBUG_PRINTLN(data.motorSpeed);
         DEBUG_PRINT("CALCULATED GROUND SPEED: ");
@@ -131,7 +134,7 @@ void getData(){
         DEBUG_PRINTLN(data.runFaultWord, HEX);
       break;
       case 0xAC:
-        data.torqueFeedback  = CANmsgRX.data[3] + CANmsgRX.data[2] << 8;
+        data.torqueFeedback  = (CANmsgRX.data[3] * 256 + CANmsgRX.data[2]) / 10;
       break;
       //ID 0x420: ECU fault codes
       case 0x420:
@@ -160,11 +163,14 @@ void getData(){
       //dtc flags 1 bytes 4, 5, dtc flags 3 bytes 6, 7
         data.avgCell = CANmsgRX.data[2];
         data.highestCell = CANmsgRX.data[1];
-        data.chargePercent = CANmsgRX.data[0];
+        data.chargePercent = (int)(CANmsgRX.data[0] / 2);
       break;
       case 0x10:
         data.cfgChangedSinceLastConfirm = false;
-
+      break;
+      case 0x999:
+        data.glvVoltage = 0;
+        data.glvVoltage = (float)((int)(data.glvVoltage * 10)) / 10;
       break;
       
     }

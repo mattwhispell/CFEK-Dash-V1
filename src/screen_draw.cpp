@@ -70,6 +70,11 @@ void drawMain(){
   tft.fillRect(8, 6, 80, 34, 0x0);
   tft.setTextColor(0xFFFF);
   tft.drawNumber(data.batteryVoltage, 10, 9);
+  //glv voltage
+  tft.fillRect(5, 39, 53, 25, 0x0);
+  tft.drawNumber(data.glvVoltage, 7, 42);
+  tft.setFreeFont(&FreeSans9pt7b);
+  tft.drawString("V", 58, 46);
 
   //battery current
   tft.fillRect(152, 9, 81, 31, 0x0);
@@ -311,7 +316,7 @@ void drawConfig(){
       tft.drawString("bfBScale", 10, 155);
     break;
     case 5:
-      tft.fillRect(8, 181, 113, 19, 0xFFFF);
+      tft.fillRect(8, 179, 113, 19, 0xFFFF);
       tft.drawString("brakeThresh", 10, 181);
     break;
     case 6:

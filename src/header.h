@@ -93,7 +93,8 @@ struct vehicleData{  //stores data to put on the screen
   unsigned int highestCell; //degF
   unsigned int gearRatioSelect; //0, 1, 2, or 3 depending on gear ratio selected
   unsigned int inputSelect; //for selection of config inputs
-  unsigned int torqueFeedback;
+  unsigned int torqueFeedback; //torque feedback in Nm
+  double glvVoltage; //grounded low voltage level
   //motor params for config
   int16_t maxDriveTorqueNm;   
   int16_t maxRegenTorqueNm;  
@@ -130,7 +131,7 @@ extern volatile int encoderPos;
 extern volatile unsigned long lastEncoderTime; // debounce timer for encoder
 extern volatile bool lastlEncoderA;
 extern volatile unsigned long lastButtonTime;
-extern volatile unsigned int secretCount, etchx, etchy;
+extern volatile unsigned int etchx, etchy;
 
 extern twai_message_t CANmsgRX;
 extern twai_message_t CANmsgTX;
