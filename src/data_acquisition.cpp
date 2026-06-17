@@ -172,7 +172,9 @@ void getData(){
         data.glvVoltage = CANmsgRX.data[7] * 256 + CANmsgRX.data[6];
         data.glvVoltage = (float)((int)(data.glvVoltage * 10)) / 10;
       break;
-      
+      case 0xF2:
+        data.state = static_cast<vehicleState>(CANmsgRX.data[0]);
+      break;
     }
     //lastData = data;
   }

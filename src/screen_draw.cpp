@@ -14,7 +14,7 @@ void drawBoot(){
   tft.drawString("CFEK", 52, 79);
   tft.pushImage(74, 127, cfek_logoWidth, cfek_logoHeight, cfek_logo);
   tft.setFreeFont(&FreeSans9pt7b);
-  tft.drawString("WheelDash V1.0", 53, 296);
+  tft.drawString("WheelDash V1.1.2", 53, 296);
 }
 
 void drawMain(){
@@ -56,14 +56,42 @@ void drawMain(){
   // }
   // else if(!data.wheelsSlipping[3]) tft.fillRect(211, 230, 24, 24, 0x0);
 
-  
+
+  tft.setFreeFont(&FreeSans9pt7b);
+  tft.fillRect(82, 76, 75, 20, 0x0);
+  switch(data.state){
+    case STATE_BOOT_INIT:
+      tft.setTextColor(0xF206);
+      tft.drawString("BOOT", 90, 88);
+      break;
+    case STATE_LV:
+      tft.setTextColor(0xfc20);
+      tft.drawString("LV", 90, 88);
+      break;
+    case STATE_HV:
+      tft.setTextColor(0xffe0);
+      tft.drawString("HV", 90, 88);
+      break;
+    case STATE_STARTUP:
+      tft.setTextColor(0x07e0);
+      tft.drawString("STARTUP", 90, 88);
+      break;
+    case STATE_DRIVER_READY:
+      tft.setTextColor(0x3de7);
+      tft.drawString("READY", 90, 88);
+      break;
+    case STATE_FAULT:
+      tft.setTextColor(0xF800);
+      tft.drawString("FAULT", 90, 88);
+      break;
+  }
 
   //ground speed
   tft.setTextSize(3);
   tft.fillRect(45, 120, 112, 85, 0x0);
   tft.setTextColor(0xFFFF);
   tft.setFreeFont(&FreeSansBold18pt7b);
-  tft.drawNumber(data.groundSpeed, 55, 120);
+  if(data.groundSpeed < 99)tft.drawNumber(data.groundSpeed, 55, 120);
   //battery voltage
   tft.setTextSize(1);
   tft.setFreeFont(&FreeSans12pt7b);
@@ -71,12 +99,14 @@ void drawMain(){
   tft.setTextColor(0xFFFF);
   tft.drawNumber(data.batteryVoltage, 10, 9);
   //glv voltage
+
   tft.fillRect(5, 39, 53, 25, 0x0);
   tft.drawNumber(data.glvVoltage, 7, 42);
   tft.setFreeFont(&FreeSans9pt7b);
   tft.drawString("V", 58, 46);
 
   //battery current
+  tft.setFreeFont(&FreeSans12pt7b);
   tft.fillRect(152, 9, 81, 31, 0x0);
   tft.setTextColor(0xFFFF);
   tft.drawNumber(data.batteryCurrent, 175, 9);

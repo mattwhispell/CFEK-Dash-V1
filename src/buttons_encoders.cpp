@@ -124,41 +124,54 @@ void IRAM_ATTR lEncoderHandler() {
     if (digitalRead(lEncoderB)) {
       encoderPos--;   // CCW
       //DEBUG_PRINTLN("CCW");
-      if(data.currentScreen == drivetrain && data.gearRatioSelect > 0)data.gearRatioSelect--;
+      if(data.currentScreen == drivetrain && data.gearRatioSelect > 0){
+        data.gearRatioSelect--;
+        tft.fillScreen(0x0);
+        drawDrivetrainSettings();
+      }
       else if(data.currentScreen == config && data.inputSelect > 0){
         tft.fillScreen(0x0);
         data.inputSelect--;
         drawConfig();
       }
       else if(data.currentScreen == etch && etchx > 0){
-        etchx--;
+        etchx-=3;
       }
     } else {
       encoderPos++;   // CW
       //DEBUG_PRINTLN("CW");
-      if(data.currentScreen == drivetrain && data.gearRatioSelect < 4)data.gearRatioSelect++;
+      if(data.currentScreen == drivetrain && data.gearRatioSelect < 4){
+        data.gearRatioSelect++;
+        tft.fillScreen(0x0);
+        drawDrivetrainSettings();
+      }
       else if(data.currentScreen == config && data.inputSelect < 6){
         tft.fillScreen(0x0);
         data.inputSelect++;
         drawConfig();
       }
       else if(data.currentScreen == etch && etchx < 237){
-        etchx++;
+        etchx+=3;
       }
     }
-    switch(data.gearRatioSelect){
-      case 0:
-        data.gearRatio = 3.909;
-      break;
-      case 1:
-        data.gearRatio = 3.583;
-      break;
-      case 2:
-        data.gearRatio = 3.308;
-      break;
-      case 3:
-        data.gearRatio = 3.071;
-      break;
+    if(data.currentScreen == drivetrain){
+      switch(data.gearRatioSelect){
+        case 0:
+          data.gearRatio = 3.909;
+        break;
+        case 1:
+          data.gearRatio = 3.583;
+        break;
+        case 2:
+          data.gearRatio = 3.308;
+        break;
+        case 3:
+          data.gearRatio = 3.071;
+        break;
+        case 4:
+          data.gearRatio = 2.84615;
+          break;
+      }
     }
     DEBUG_PRINTLN(encoderPos);
     lastEncoderTime = millis();
@@ -211,7 +224,7 @@ void IRAM_ATTR rEncoderHandler() {
         drawConfig();
       }
       else if(data.currentScreen == etch && etchy > 0){
-        etchy--;
+        etchy-=3;
       }
     } else {
       encoderPos++;   // CW
@@ -256,7 +269,7 @@ void IRAM_ATTR rEncoderHandler() {
         drawConfig();
       }
       else if(data.currentScreen == etch && etchy < 317){
-        etchy++;
+        etchy+=3;
       }
     }
     DEBUG_PRINTLN(encoderPos);

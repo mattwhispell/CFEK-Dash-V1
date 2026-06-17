@@ -55,10 +55,12 @@
 #define SLIP_RATIO_LIMIT .05 // in decimal percentage
 
 enum vehicleState {  //which state the vehicle is in
- state0,
- state1,
- state2,
- state3
+    STATE_BOOT_INIT     = 0,
+    STATE_LV            = 1,
+    STATE_HV            = 2,
+    STATE_STARTUP       = 3,
+    STATE_DRIVER_READY  = 4,
+    STATE_FAULT         = 5
 };
 
 enum screen {  //which screen is currently shown
